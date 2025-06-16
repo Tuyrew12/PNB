@@ -646,7 +646,7 @@ buttonClicked|bglconvert]])
                       if not ConsumeArroz then
                     Sleep(100)
                     for i = 1, 1 do
-                        if AutoArroz then
+                        if UseArroz then
                                 local x, y = getSitXYForConsume()
     SendPacketRaw(false, {
       type = 3,
@@ -664,7 +664,7 @@ buttonClicked|bglconvert]])
                                       if not ConsumeClover then
                     Sleep(100)
                     for i = 1, 1 do
-                        if AutoClover then
+                        if UseClover then
                                 local x, y = getSitXYForConsume()
     SendPacketRaw(false, {
       type = 3,
@@ -682,7 +682,7 @@ buttonClicked|bglconvert]])
                                       if not ConsumeSongpyeon then
                     Sleep(100)
                     for i = 1, 1 do
-                        if AutoSongpyeon then
+                        if UseSongpyeon then
                                 local x, y = getSitXYForConsume()
     SendPacketRaw(false, {
       type = 3,
