@@ -69,40 +69,27 @@ AddHook("onvariant", "mommy", function(var)
             consumeClover = true
         else
             consumeClover = false
+            consumedFlags[528] = false
         end
 
         if var[1]:find("|4604|") then
             consumeArroz = true
         else
             consumeArroz = false
+            consumedFlags[4604] = false
         end
 
         if var[1]:find("|1056|") then
             consumeSongpyeon = true
         else
             consumeSongpyeon = false
+            consumedFlags[1056] = false
         end
         return true
     end
     return false
 end)
 
--- Function to adjust SitX and SitY based on Mode
-function AdjustSitCoordinates()
-  if Mode == "mneck" then
-    adjustedSitX = SitX + 1
-    adjustedSitY = SitY
-  elseif Mode == "vertical" then
-    adjustedSitX = SitX - 1
-    adjustedSitY = SitY
-  elseif Mode == "horizontal" then
-    adjustedSitX = SitX - 1
-    adjustedSitY = SitY - 1
-  else
-    adjustedSitX = SitX
-    adjustedSitY = SitY
-  end
-end
 
 function obj(id)
   local total = 0
@@ -708,7 +695,7 @@ buttonClicked|bglconvert]])
     end
 
     while true do
-      Sleep(1250) -- Add a small delay to prevent high CPU usage
+      Sleep(2500) -- Add a small delay to prevent high CPU usage
       Consumes()
       Sleep(250) -- Add a small delay to prevent high CPU usage
       AutoConvertDLCheck()
