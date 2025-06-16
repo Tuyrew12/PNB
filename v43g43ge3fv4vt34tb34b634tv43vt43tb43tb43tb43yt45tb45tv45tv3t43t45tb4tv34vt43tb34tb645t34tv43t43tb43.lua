@@ -259,7 +259,7 @@ function SendWebhook2()
 {"name": "<:magplant:1368981774138605668> Magplant",
 "value": "]] .. Now .. " of " .. #Mag .. [[
 ",
-"inline": false},
+"inline": true},
 {"name": "<:award:1373113752127537193> Consumables",
 "value": "]] .. Songpyeon .. " <:songpyeon:1368980154579157174> " .. Clover .. " <:clover:1368979672083464395> " .. Arroz .. [[
  <:arroz:1368979942007902238>",
@@ -271,7 +271,7 @@ function SendWebhook2()
 {"name": "<:gemz:1382534859343401031> Gems Drop",
 "value": "]] .. FNum(BGems) .. "**<:blackgems:1376711562827534448>** " .. FNum(PGems) .. [[
 **<:pinkgems:1376711581383131157>**",
-"inline": false}],
+"inline": true}],
 "footer": {"text": "Total PNB Time : ]] .. FTime(os.time() - StartTime) .. [[
 "},
 "color": ]] .. math.random(0, 16777215) .. [[
