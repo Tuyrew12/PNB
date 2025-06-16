@@ -708,7 +708,7 @@ buttonClicked|bglconvert]])
     end
 
     while true do
-      Sleep(250) -- Add a small delay to prevent high CPU usage
+      Sleep(1250) -- Add a small delay to prevent high CPU usage
       Consumes()
       Sleep(250) -- Add a small delay to prevent high CPU usage
       AutoConvertDLCheck()
