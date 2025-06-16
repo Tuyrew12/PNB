@@ -1,4 +1,3 @@
-
 -- [Second Webhook - 5 minute intervals]
 WebhookPNB2 = true
 WebhookLink2 = "https://discord.com/api/webhooks/1383886557525835806/fAjQwl4awVlIl99LpnmNuO7y65su2E53VztkezUNCjnJJ81KzAw_WGZJBvr1FPoATbSP"
@@ -39,6 +38,7 @@ MagW = false
 Speed = 0
 IsConsuming = false
 LastWebhook2Time = 0
+LastWebhookTime = 0 -- Added to track first webhook last send time
 RemoveHooks()
 
 function inv(id)
@@ -465,6 +465,10 @@ function FTime(sec)
 end
 
 function SendInfoPNB()
+  local currentTime = os.time()
+  if currentTime - LastWebhookTime < 300 then return end -- 5 minutes = 300 seconds
+  LastWebhookTime = currentTime
+
   math.randomseed(os.time())
   PGems = pcall(obj) and obj(PinkGems) or PGems
   BGems = pcall(obj) and obj(BlackGems) or BGems
