@@ -699,6 +699,7 @@ buttonClicked|bglconvert]])
       Sleep(250) -- Add a small delay to prevent high CPU usage
       AutoConvertDLCheck()
       Sleep(250) -- Add a small delay to prevent high CPU usage
+      SendInfoPNB() -- Send main webhook every 5 minutes
       SendWebhook2() -- Send second webhook every 5 minutes
       Sleep(250) -- Add a small delay to prevent high CPU usage
     end
