@@ -54,19 +54,9 @@ function inv(id)
 end
 
 local function wrenchMe()
-    if GetWorld() == nil then
-        Sleep(delayReconnect)
-        RequestJoinWorld(worldName)
-        Sleep(delayReconnect)
-    else
-        if GetWorld() == nil then
-            Sleep(delayReconnect)
-            return
-        end
         SendPacket(2, "action|wrench\n|netid|".. GetLocal().netid)
         Sleep(300)
     end
-end
 
 adjustedSitX, adjustedSitY = SitX, SitY
 
