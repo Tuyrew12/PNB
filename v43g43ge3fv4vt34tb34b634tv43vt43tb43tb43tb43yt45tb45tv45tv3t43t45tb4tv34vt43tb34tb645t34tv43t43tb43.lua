@@ -1,8 +1,15 @@
---[DON'T SCROLL DOWN!]
-RoleMVP = false
-RoleMOD = false
+-- [Second Webhook - 5 minute intervals]
+WebhookPNB2 = true
 WebhookLink2 = "https://discord.com/api/webhooks/1383886557525835806/fAjQwl4awVlIl99LpnmNuO7y65su2E53VztkezUNCjnJJ81KzAw_WGZJBvr1FPoATbSP"
 
+-- =========================
+--   END CONFIGURATION     --
+-- =========================
+-- [Role Account]
+RoleMVP = false
+RoleMOD = false
+
+--[DON'T SCROLL DOWN!]
 DelayConvertDL = DelayConvertDL or 0
 WorldName = GetWorld().name or "Unknown"
 Nick = GetLocal().name:gsub("`(%S)", ""):match("%S+")
@@ -220,7 +227,11 @@ end
 
 function onvariant(var)
   if "OnSDBroadcast" == var[0] then
-    if RoleMVP then SendPacket(2, [[action|input|text|/radio]]) end
+    if RoleMVP then
+      SendPacket(2, [[
+action|input
+|text|/radio]])
+    end
     return true
   elseif "OnTalkBubble" == var[0] and var[2]:find("You received a MAGPLANT 5000 Remote") then
     GetRemote = true
@@ -235,7 +246,11 @@ function onvariant(var)
   elseif "OnConsoleMessage" == var[0] and var[1]:find("Where would you like to go") then
     MagW = false
     GetRemote = false
-    SendPacket(3, "action|join_request|name|" .. WorldName .. "|invitedWorld|0")
+    SendPacket(3, [[
+action|join_request
+name|]] .. WorldName .. [[
+|
+invitedWorld|0]])
   elseif "OnConsoleMessage" == var[0] and var[1]:find("World Locked") then
     if var[1]:find(WorldName) then
       Count = 1
@@ -244,8 +259,14 @@ function onvariant(var)
     else
       MagW = false
       GetRemote = false
-      if not RoleMOD then Ghost = true end
-      SendPacket(3, "action|join_request|name|" .. WorldName .. "|invitedWorld|0")
+      if not RoleMOD then
+        Ghost = true
+      end
+      SendPacket(3, [[
+action|join_request
+name|]] .. WorldName .. [[
+|
+invitedWorld|0]])
     end
   elseif "OnDialogRequest" == var[0] and GetRemote then
     if var[1]:find("Wow, that's fast delivery.") then
@@ -262,7 +283,15 @@ function onvariant(var)
         Now = Now == #Mag and 1 or Now + 1
         PathMag(Mag[Now].x, Mag[Now].y - 1)
       else
-        SendPacket(2, "action|dialog_return|dialog_name|magplant_edit|x|" .. Mag[Now].x .. "|y|" .. Mag[Now].y .. "|buttonClicked|getRemote")
+        SendPacket(2, [[
+action|dialog_return
+dialog_name|magplant_edit
+x|]] .. Mag[Now].x .. [[
+|
+y|]] .. Mag[Now].y .. [[
+|
+buttonClicked|getRemote
+]])
         if Mode == "horizontal" then
           local x, y = SitX, SitY
           FindPath(x - 1, y - 1)
@@ -279,29 +308,58 @@ function onvariant(var)
     end
     return true
   elseif "OnConsoleMessage" == var[0] and var[1]:find("Radio disabled,") and not RoleMVP then
-    SendPacket(2, [[action|input|text|/radio]])
+    SendPacket(2, [[
+action|input
+|text|/radio]])
     return true
   elseif "OnConsoleMessage" == var[0] and var[1]:find("Spam detected!") and not RoleMVP then
-    SendPacket(2, [[action|input|text|/radio]])
+    SendPacket(2, [[
+action|input
+|text|/radio]])
     return true
   elseif not (not ("OnConsoleMessage" == var[0] and var[1]:find("from")) or RoleMVP) or "OnNameChanged" == var[0] and RoleMVP then
     if GetRemote then
       if CheatOn then
         if 0 == Count % (DelayRemote * 2) then
           CheatOn = false
-          SendPacket(2, "action|dialog_return|dialog_name|cheats|check_autofarm|1|check_bfg|1|check_gems|" .. CheckGems .. "|check_lonely|" .. CheckIgnore .. "|check_ignoreo|" .. CheckIgnore .. "|check_ignoref|" .. CheckIgnore)
+          SendPacket(2, [[
+action|dialog_return
+dialog_name|cheats
+check_autofarm|1
+check_bfg|1
+check_gems|]] .. CheckGems .. [[
+
+check_lonely|]] .. CheckIgnore .. [[
+
+check_ignoreo|]] .. CheckIgnore .. [[
+
+check_ignoref|]] .. CheckIgnore)
         end
         Count = Count + 1
       elseif AutoConvertDL then
         if 0 == Count % DelayConvertBlack then
-          SendPacket(2, "action|dialog_return|dialog_name|info_box|buttonClicked|make_bgl")
+          SendPacket(2, [[
+action|dialog_return
+dialog_name|info_box
+buttonClicked|make_bgl]])
         end
         Count = Count + 1
       end
+      
     elseif CheatOff then
       if 0 == Count % (DelayRemote * 2) then
         CheatOff = false
-        SendPacket(2, "action|dialog_return|dialog_name|cheats|check_autofarm|0|check_bfg|0|check_gems|1|check_lonely|" .. CheckIgnore .. "|check_ignoreo|" .. CheckIgnore .. "|check_ignoref|" .. CheckIgnore)
+        SendPacket(2, [[
+action|dialog_return
+dialog_name|cheats
+check_autofarm|0
+check_bfg|0
+check_gems|1
+check_lonely|]] .. CheckIgnore .. [[
+
+check_ignoreo|]] .. CheckIgnore .. [[
+
+check_ignoref|]] .. CheckIgnore)
       end
       Count = Count + 1
     elseif MagW then
@@ -312,7 +370,9 @@ function onvariant(var)
         MagW = true
       elseif 0 == Count % (DelayRemote * 2) and Ghost then
         Ghost = false
-        SendPacket(2, "action|input|text|/ghost")
+        SendPacket(2, [[
+action|input
+|text|/ghost]])
       end
       Count = Count + 1
     end
@@ -350,10 +410,10 @@ end
 
 function SendInfoPNB()
   local currentTime = os.time()
-  if currentTime - LastWebhookTime < 300 then return end -- 5 minutes
+  if currentTime - LastWebhookTime < 300 then return end -- 5 minutes = 300 seconds
   LastWebhookTime = currentTime
 
-  math.randomseed(currentTime)
+  math.randomseed(os.time())
   PGems = pcall(obj) and obj(PinkGems) or PGems
   BGems = pcall(obj) and obj(BlackGems) or BGems
   Songpyeon = pcall(inv) and inv(1056) or Songpyeon
@@ -362,7 +422,6 @@ function SendInfoPNB()
   BLK = pcall(inv) and inv(11550) or BLK
   BGL = pcall(inv) and inv(7188) or BGL
   DL = pcall(inv) and inv(1796) or DL
-
   if NoGemsDrop then
     if AutoConvertDL then
       TotalLocks = tonumber(BLK .. BGL .. DL)
@@ -377,38 +436,58 @@ function SendInfoPNB()
     end
     BGemsBefore = BGems
   end
-
-  local color = math.random(0, 16777215)
   Payload = [[
-{
-  "embeds": [{
-    "author": {
-      "name": "PNB LOGS #REBANA",
-      "icon_url": "https://cdn.discordapp.com/attachments/1349225845402894339/1380592004693622857/AAAAA.gif"
-    },
-    "fields": [
-      {"name": "<:AchievementSprites:1373112887203069972> Account", "value": "]] .. Nick .. [[", "inline": true},
-      {"name": "<:growglobe:1382535597087785071> World", "value": "]] .. WorldName .. [[", "inline": true},
-      {"name": "<:magplant:1368981774138605668> Magplant", "value": "]] .. Now .. " of " .. #Mag .. [[", "inline": true},
-      {"name": "<:award:1373113752127537193> Consumables", "value": "]] .. Songpyeon .. " <:songpyeon:1368980154579157174> " .. Clover .. " <:clover:1368979672083464395> " .. Arroz .. [[ <:arroz:1368979942007902238>", "inline": true},
-      {"name": "<:fwl:1373113385016758363> Total Locks", "value": "]] .. BLK .. " <a:irengb:1381540201955852359>  " .. BGL .. " <a:bglb:1381540210206314566>  " .. DL .. [[ <a:dlb:1381540213071024228>", "inline": true},
-      {"name": "<:gemz:1382534859343401031> Gems Drop", "value": "]] .. FNum(BGems) .. "**<:blackgems:1376711562827534448>** " .. FNum(PGems) .. [[ **<:pinkgems:1376711581383131157>**", "inline": true}
-    ],
-    "footer": {"text": "Total PNB Time : ]] .. FTime(currentTime - StartTime) .. [["},
-    "color": ]] .. color .. [[
-  }]
+{"embeds": [{
+"author": {"name": "PNB LOGS #REBANA",
+"icon_url": "https://cdn.discordapp.com/attachments/1349225845402894339/1380592004693622857/AAAAA.gif?ex=68466a40&is=684518c0&hm=394c453dd6c593ac3b744ec4bda1d0604e2d4d408e6e3243e8eab022c86fbe3d&"},
+"fields": [{"name": "<:AchievementSprites:1373112887203069972> Account",
+"value": "]] .. Nick .. [[
+",
+"inline": true},
+{"name": "<:growglobe:1382535597087785071> World",
+"value": "]] .. WorldName .. [[
+",
+"inline": true},
+{"name": "<:magplant:1368981774138605668> Magplant",
+"value": "]] .. Now .. " of " .. #Mag .. [[
+",
+"inline": true},
+{"name": "<:award:1373113752127537193> Consumables",
+"value": "]] .. Songpyeon .. " <:songpyeon:1368980154579157174> " .. Clover .. " <:clover:1368979672083464395> " .. Arroz .. [[
+ <:arroz:1368979942007902238>",
+"inline": true},
+{"name": "<:fwl:1373113385016758363> Total Locks",
+"value": "]] .. BLK .. " <a:irengb:1381540201955852359>  " .. BGL .. " <a:bglb:1381540210206314566>  " .. DL .. [[
+ <a:dlb:1381540213071024228>",
+"inline": true},
+{"name": "<:gemz:1382534859343401031> Gems Drop",
+"value": "]] .. FNum(BGems) .. "**<:blackgems:1376711562827534448>** " .. FNum(PGems) .. [[
+**<:pinkgems:1376711581383131157>**",
+"inline": true}],
+"footer": {"text": "Total PNB Time : ]] .. FTime(os.time() - StartTime) .. [[
+"},
+"color": ]] .. math.random(0, 16777215) .. [[
+}]
 }]]
-
-  if WebhookLink then SendWebhook(WebhookLink, Payload) end
-  if WebhookLink2 then SendWebhook(WebhookLink2, Payload) end
+  SendWebhook(WebhookLink, Payload)
+  SendWebhook(WebhookLink2, Payload)
 end
 
-if AutoSuckGems then
-  for i = 1, 3 do
-    SendPacket(2, "action|dialog_return|dialog_name|popup|buttonClicked|bgem_suckall")
-    Sleep(250)
+
+  if WebhookPNB then
+    SendInfoPNB()
   end
-end
+
+  if AutoSuckGems then
+    for i = 1, 3 do
+      SendPacket(2, [[
+action|dialog_return
+dialog_name|popup
+buttonClicked|bgem_suckall
+]])
+      Sleep(250)
+    end
+  end
 
 function Overlay(text)
   local var = {}
@@ -418,79 +497,154 @@ function Overlay(text)
 end
 
 if os or not WebhookPNB then
-  if #Mag == 0 then
+  if 0 == #Mag then
     Overlay("`7Please Set Magplant Background")
   else
     Overlay("`2Script is working!")
     Sleep(1000)
-
     AddHook("onvariant", "onvariant", onvariant)
     Sleep(1000)
-
     if HideAnimation then
       AddHook("onprocesstankupdatepacket", "OnIncomingRawPacket", function(pkt)
-        if pkt.type == 3 or pkt.type == 8 or pkt.type == 14 or pkt.type == 17 then
+        if 3 == pkt.type or 8 == pkt.type or 14 == pkt.type or 17 == pkt.type then
           return true
         end
       end)
       Sleep(1000)
     end
-    SendPacket(2, "action|dialog_return|dialog_name|cheats|check_autofarm|0|check_bfg|0|check_gems|1|check_lonely|" .. CheckIgnore .. "|check_ignoreo|" .. CheckIgnore .. "|check_ignoref|" .. CheckIgnore)
-    Sleep(1000)
+    if not RoleMVP then
+      SendPacket(2, [[
+action|input
+|text|/radio]])
+      Sleep(1000)
     end
+    SendPacket(2, [[
+action|dialog_return
+dialog_name|cheats
+check_autofarm|0
+check_bfg|0
+check_gems|1
+check_lonely|]] .. CheckIgnore .. [[
 
+check_ignoreo|]] .. CheckIgnore .. [[
+
+check_ignoref|]] .. CheckIgnore)
+    Sleep(1000)
+    if RoleMVP or RoleMOD then
+      SendPacket(2, [[
+action|input
+|text|/modage 30]])
+      Sleep(1000)
+    end
 
 function AutoConvertDLCheck()
-  if AutoConvertDL and not IsConsuming then
-    BGL = inv(7188) or 0
-    DL = inv(1796) or 0
-    local gemThreshold = EvadeTax and 100000 or 1000000
-    if GetPlayerInfo().gems > gemThreshold then
-      SendPacket(2, "action|dialog_return\ndialog_name|telephone\nnum|53785\nx|" .. (TelX - 1) .. "\ny|" .. (TelY - 1) .. "\nbuttonClicked|dlconvert")
-      Sleep(700)
-    end
-    if BGL >= 100 then
-      SendPacket(2, "action|dialog_return\ndialog_name|info_box\nbuttonClicked|make_bgl")
-      Sleep(700)
-    end
-    if DL >= 100 then
-      SendPacket(2, "action|dialog_return\ndialog_name|telephone\nnum|53785\nx|" .. (TelX - 1) .. "\ny|" .. (TelY - 1) .. "\nbuttonClicked|bglconvert")
-      Sleep(700)
-    end
-  end
-end
-
-function ConsumeItem(consumeFlag, useFlag, itemID)
-  wrenchMe()
-  if not consumeFlag then
-    Sleep(100)
-    for i = 1, 1 do
-      if useFlag then
-        local x, y = getSitXYForConsume()
-        SendPacketRaw(false, {
-          type = 3,
-          value = itemID,
-          px = x,
-          py = y,
-          x = x * 32,
-          y = y * 32
-        })
-        break
+      if AutoConvertDL and not IsConsuming then
+        -- Update inventory values
+        BGL = inv(7188) or 0
+        DL = inv(1796) or 0
+        
+        -- Trigger 1: dlconvert - when gems reach threshold
+        local gemThreshold = EvadeTax and 100000 or 1000000
+        if GetPlayerInfo().gems > gemThreshold then
+          SendPacket(2, [[
+action|dialog_return
+dialog_name|telephone
+num|53785|
+x|]] .. (TelX - 1) .. [[
+|
+y|]] .. (TelY - 1) .. [[
+|
+buttonClicked|dlconvert]])
+          Sleep(700)
+        end
+        
+        -- Trigger 2: make_bgl - when there are 100+ BGL in inventory
+        if BGL >= 100 then
+          SendPacket(2, [[
+action|dialog_return
+dialog_name|info_box
+buttonClicked|make_bgl]])
+          Sleep(700)
+        end
+        
+        -- Trigger 3: bglconvert - when there are 100+ DL in inventory
+        if DL >= 100 then
+          SendPacket(2, [[
+action|dialog_return
+dialog_name|telephone
+num|53785|
+x|]] .. (TelX - 1) .. [[
+|
+y|]] .. (TelY - 1) .. [[
+|
+buttonClicked|bglconvert]])
+          Sleep(700)
+        end
       end
     end
-  end
-end
 
-while true do
-  Sleep(250)
-  ConsumeItem(ConsumeArroz, UseArroz, 4604)
-  ConsumeItem(ConsumeClover, UseClover, 528)
-  ConsumeItem(ConsumeSongpyeon, UseSongpyeon, 1056)
-  Sleep(250)
-  AutoConvertDLCheck()
-  Sleep(250)
-  if WebhookPNB then
-  SendInfoPNB()
-end
-end
+
+    while true do
+      Sleep(250)
+                      wrenchMe()
+                      if not ConsumeArroz then
+                    Sleep(100)
+                    for i = 1, 1 do
+                        if UseArroz then
+                                local x, y = getSitXYForConsume()
+    SendPacketRaw(false, {
+      type = 3,
+      value = 4604,
+      px = x,
+      py = y,
+      x = x * 32,
+      y = y * 32
+    })
+                            break
+                        end
+                    end
+                end
+                                      wrenchMe()
+                                      if not ConsumeClover then
+                    Sleep(100)
+                    for i = 1, 1 do
+                        if UseClover then
+                                local x, y = getSitXYForConsume()
+    SendPacketRaw(false, {
+      type = 3,
+      value = 528,
+      px = x,
+      py = y,
+      x = x * 32,
+      y = y * 32
+    })
+                            break
+                        end
+                    end
+                end
+                                      wrenchMe()
+                                      if not ConsumeSongpyeon then
+                    Sleep(100)
+                    for i = 1, 1 do
+                        if UseSongpyeon then
+                                local x, y = getSitXYForConsume()
+    SendPacketRaw(false, {
+      type = 3,
+      value = 1056,
+      px = x,
+      py = y,
+      x = x * 32,
+      y = y * 32
+    })
+                            break
+                        end
+                    end
+                end
+      Sleep(250) -- Add a small delay to prevent high CPU usage
+      AutoConvertDLCheck()
+      Sleep(250) -- Add a small delay to prevent high CPU usage
+    end
+  end
+else
+  Overlay("`7Turn On API MakeRequest & os for Webhook PNB")
 end
