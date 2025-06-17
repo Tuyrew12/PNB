@@ -584,63 +584,66 @@ buttonClicked|bglconvert]])
 
     while true do
       Sleep(250)
-                      wrenchMe()
-                      if not ConsumeArroz then
-                    Sleep(100)
-                    for i = 1, 1 do
-                        if UseArroz then
-                                local x, y = getSitXYForConsume()
-    SendPacketRaw(false, {
-      type = 3,
-      value = 4604,
-      px = x,
-      py = y,
-      x = x * 32,
-      y = y * 32
-    })
-                            break
-                        end
-                    end
-                end
-                                      wrenchMe()
-                                      if not ConsumeClover then
-                    Sleep(100)
-                    for i = 1, 1 do
-                        if UseClover then
-                                local x, y = getSitXYForConsume()
-    SendPacketRaw(false, {
-      type = 3,
-      value = 528,
-      px = x,
-      py = y,
-      x = x * 32,
-      y = y * 32
-    })
-                            break
-                        end
-                    end
-                end
-                                      wrenchMe()
-                                      if not ConsumeSongpyeon then
-                    Sleep(100)
-                    for i = 1, 1 do
-                        if UseSongpyeon then
-                                local x, y = getSitXYForConsume()
-    SendPacketRaw(false, {
-      type = 3,
-      value = 1056,
-      px = x,
-      py = y,
-      x = x * 32,
-      y = y * 32
-    })
-                            break
-                        end
-                    end
-                end
+      wrenchMe()
+      if not ConsumeArroz then
+        Sleep(100)
+        for i = 1, 1 do
+          if UseArroz then
+            local x, y = getSitXYForConsume()
+            SendPacketRaw(false, {
+              type = 3,
+              value = 4604,
+              px = x,
+              py = y,
+              x = x * 32,
+              y = y * 32
+            })
+            break
+          end
+        end
+      end
+      wrenchMe()
+      if not ConsumeClover then
+        Sleep(100)
+        for i = 1, 1 do
+          if UseClover then
+            local x, y = getSitXYForConsume()
+            SendPacketRaw(false, {
+              type = 3,
+              value = 528,
+              px = x,
+              py = y,
+              x = x * 32,
+              y = y * 32
+            })
+            break
+          end
+        end
+      end
+      wrenchMe()
+      if not ConsumeSongpyeon then
+        Sleep(100)
+        for i = 1, 1 do
+          if UseSongpyeon then
+            local x, y = getSitXYForConsume()
+            SendPacketRaw(false, {
+              type = 3,
+              value = 1056,
+              px = x,
+              py = y,
+              x = x * 32,
+              y = y * 32
+            })
+            break
+          end
+        end
+      end
       Sleep(250) -- Add a small delay to prevent high CPU usage
       AutoConvertDLCheck()
       Sleep(250) -- Add a small delay to prevent high CPU usage
+      if WebhookPNB then
+        SendInfoPNB()
+      end
     end
   end
 else
