@@ -41,7 +41,6 @@ ConsumeClover = false
 ConsumeSongpyeon = false
 IsConsuming = false
 LastWebhook2Time = 0
-delayReconnect = 2500
 LastWebhookTime = 0 -- Added to track first webhook last send time
 RemoveHooks()
 
@@ -585,66 +584,39 @@ buttonClicked|bglconvert]])
     end
 
 
-    while true do
-      Sleep(250)
-                      wrenchMe()
-                      if not ConsumeArroz then
-                    Sleep(100)
-                    for i = 1, 1 do
-                        if UseArroz then
-                                local x, y = getSitXYForConsume()
-    SendPacketRaw(false, {
-      type = 3,
-      value = 4604,
-      px = x,
-      py = y,
-      x = x * 32,
-      y = y * 32
-    })
-                            break
-                        end
-                    end
-                end
-                                      wrenchMe()
-                                      if not ConsumeClover then
-                    Sleep(100)
-                    for i = 1, 1 do
-                        if UseClover then
-                                local x, y = getSitXYForConsume()
-    SendPacketRaw(false, {
-      type = 3,
-      value = 528,
-      px = x,
-      py = y,
-      x = x * 32,
-      y = y * 32
-    })
-                            break
-                        end
-                    end
-                end
-                                      wrenchMe()
-                                      if not ConsumeSongpyeon then
-                    Sleep(100)
-                    for i = 1, 1 do
-                        if UseSongpyeon then
-                                local x, y = getSitXYForConsume()
-    SendPacketRaw(false, {
-      type = 3,
-      value = 1056,
-      px = x,
-      py = y,
-      x = x * 32,
-      y = y * 32
-    })
-                            break
-                        end
-                    end
-                end
-      Sleep(250) -- Add a small delay to prevent high CPU usage
-      AutoConvertDLCheck()
-      Sleep(250) -- Add a small delay to prevent high CPU usage
+function ConsumeItem(consumeFlag, useFlag, itemValue)
+  wrenchMe()
+  if not consumeFlag then
+    Sleep(100)
+    if useFlag then
+      local x, y = getSitXYForConsume()
+      SendPacketRaw(false, {
+        type = 3,
+        value = itemValue,
+        px = x,
+        py = y,
+        x = x * 32,
+        y = y * 32
+      })
     end
+  end
+end
+
+while true do
+  Sleep(250)
+  ConsumeItem(ConsumeArroz, UseArroz, 4604)
+  ConsumeItem(ConsumeClover, UseClover, 528)
+  ConsumeItem(ConsumeSongpyeon, UseSongpyeon, 1056)
+  Sleep(250) -- Add a small delay to prevent high CPU usage
+  AutoConvertDLCheck()
+  Sleep(250) -- Add a small delay to prevent high CPU usage
+
+  -- Call SendInfoPNB every 5 minutes
+  local currentTime = os.time()
+  if currentTime - LastWebhookTime >= 300 then
+    SendInfoPNB()
+  end
+end
   end
 else
   Overlay("`7Turn On API MakeRequest & os for Webhook PNB")
