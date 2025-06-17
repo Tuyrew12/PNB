@@ -42,6 +42,8 @@ ConsumeSongpyeon = false
 IsConsuming = false
 LastWebhook2Time = 0
 LastWebhookTime = 0 -- Added to track first webhook last send time
+worldName = WorldName
+delayReconnect = 2500
 RemoveHooks()
 
 function inv(id)
@@ -54,9 +56,19 @@ function inv(id)
 end
 
 local function wrenchMe()
+    if GetWorld() == nil then
+        Sleep(delayReconnect)
+        RequestJoinWorld(worldName)
+        Sleep(delayReconnect)
+    else
+        if GetWorld() == nil then
+            Sleep(delayReconnect)
+            return
+        end
         SendPacket(2, "action|wrench\n|netid|".. GetLocal().netid)
         Sleep(300)
     end
+end
 
 adjustedSitX, adjustedSitY = SitX, SitY
 
