@@ -227,15 +227,17 @@ function SendWebhook(url, data)
   }, data)
 end
 
-function SendWebhook2()
+function SendWebhook2(Payload2)
   if not WebhookPNB2 then return end
-  
+  SendWebhook(WebhookLink2, Payload2)
+end
+
+function SendInfoPNB()
   local currentTime = os.time()
-  if currentTime - LastWebhook2Time < 300 then return end -- 5 minutes = 300 seconds
-  
-  LastWebhook2Time = currentTime
-  
-  -- Update current values
+  if currentTime - LastWebhookTime < 300 then return end -- 5 minutes = 300 seconds
+  LastWebhookTime = currentTime
+
+  math.randomseed(os.time())
   PGems = pcall(obj) and obj(PinkGems) or PGems
   BGems = pcall(obj) and obj(BlackGems) or BGems
   Songpyeon = pcall(inv) and inv(1056) or Songpyeon
@@ -244,7 +246,20 @@ function SendWebhook2()
   BLK = pcall(inv) and inv(11550) or BLK
   BGL = pcall(inv) and inv(7188) or BGL
   DL = pcall(inv) and inv(1796) or DL
-  
+  if NoGemsDrop then
+    if AutoConvertDL then
+      TotalLocks = tonumber(BLK .. BGL .. DL)
+      Speed = string.format("%.2f DL", (TotalLocks - LockBefore) / 30)
+      LockBefore = TotalLocks
+    end
+  else
+    if BGems >= BGemsBefore * 1.5 then
+      Speed = string.format("%.2f BG", (BGems - BGemsBefore) / 30)
+    else
+      Speed = string.format("%.2f BG", BGems / 30)
+    end
+    BGemsBefore = BGems
+  end
   local Payload2 = [[
 {"embeds": [{
 "author": {"name": "PNB LOGS #REBANA",
@@ -278,8 +293,8 @@ function SendWebhook2()
 "color": ]] .. math.random(0, 16777215) .. [[
 }]
 }]]
-  
-  SendWebhook(WebhookLink2, Payload2)
+  SendWebhook(WebhookLink, Payload2)
+  SendWebhook2(Payload2)
 end
 
 function onvariant(var)
@@ -594,15 +609,16 @@ action|input
     end
 
 function AutoConvertDLCheck()
-      if AutoConvertDL and not IsConsuming then
-        -- Update inventory values
-        BGL = inv(7188) or 0
-        DL = inv(1796) or 0
-        
-        -- Trigger 1: dlconvert - when gems reach threshold
-        local gemThreshold = EvadeTax and 100000 or 1000000
-        if GetPlayerInfo().gems > gemThreshold then
-          SendPacket(2, [[
+  if not GetRemote then
+    if AutoConvertDL and not IsConsuming then
+      -- Update inventory values
+      BGL = inv(7188) or 0
+      DL = inv(1796) or 0
+      
+      -- Trigger 1: dlconvert - when gems reach threshold
+      local gemThreshold = EvadeTax and 100000 or 1000000
+      if GetPlayerInfo().gems > gemThreshold then
+        SendPacket(2, [[
 action|dialog_return
 dialog_name|telephone
 num|53785|
@@ -611,21 +627,21 @@ x|]] .. (TelX - 1) .. [[
 y|]] .. (TelY - 1) .. [[
 |
 buttonClicked|dlconvert]])
-          Sleep(700)
-        end
-        
-        -- Trigger 2: make_bgl - when there are 100+ BGL in inventory
-        if BGL >= 100 then
-          SendPacket(2, [[
+        Sleep(700)
+      end
+      
+      -- Trigger 2: make_bgl - when there are 100+ BGL in inventory
+      if BGL >= 100 then
+        SendPacket(2, [[
 action|dialog_return
 dialog_name|info_box
 buttonClicked|make_bgl]])
-          Sleep(700)
-        end
-        
-        -- Trigger 3: bglconvert - when there are 100+ DL in inventory
-        if DL >= 100 then
-          SendPacket(2, [[
+        Sleep(700)
+      end
+      
+      -- Trigger 3: bglconvert - when there are 100+ DL in inventory
+      if DL >= 100 then
+        SendPacket(2, [[
 action|dialog_return
 dialog_name|telephone
 num|53785|
@@ -634,73 +650,58 @@ x|]] .. (TelX - 1) .. [[
 y|]] .. (TelY - 1) .. [[
 |
 buttonClicked|bglconvert]])
-          Sleep(700)
-        end
+        Sleep(700)
+      end
+    end
+  end
+end
+
+
+    function consumeItem(consumeFlag, useFlag, itemId)
+  wrenchMe()
+  if not _G[consumeFlag] then
+    Sleep(100)
+    if _G[useFlag] then
+      local x, y = getSitXYForConsume()
+      SendPacketRaw(false, {
+        type = 3,
+        value = itemId,
+        px = x,
+        py = y,
+        x = x * 32,
+        y = y * 32
+      })
+    end
+  end
+end
+
+function functionConsume()
+  if not GetRemote then
+    consumeItem('ConsumeArroz', 'UseArroz', 4604)
+    consumeItem('ConsumeClover', 'UseClover', 528)
+    consumeItem('ConsumeSongpyeon', 'UseSongpyeon', 1056)
+  end
+end
+
+    function SendAllWebhooksTimer()
+      while true do
+        SendInfoPNB()
+        SendWebhook2()
+        Sleep(300000) -- 5 menit dalam milidetik
       end
     end
 
+    -- Jalankan timer pengiriman kedua webhook di thread terpisah
+    pcall(function()
+      SendAllWebhooksTimer()
+    end)
 
     while true do
       Sleep(250)
-                      wrenchMe()
-                      if not ConsumeArroz then
-                    Sleep(100)
-                    for i = 1, 1 do
-                        if UseArroz then
-                                local x, y = getSitXYForConsume()
-    SendPacketRaw(false, {
-      type = 3,
-      value = 4604,
-      px = x,
-      py = y,
-      x = x * 32,
-      y = y * 32
-    })
-                            break
-                        end
-                    end
-                end
-                                      wrenchMe()
-                                      if not ConsumeClover then
-                    Sleep(100)
-                    for i = 1, 1 do
-                        if UseClover then
-                                local x, y = getSitXYForConsume()
-    SendPacketRaw(false, {
-      type = 3,
-      value = 528,
-      px = x,
-      py = y,
-      x = x * 32,
-      y = y * 32
-    })
-                            break
-                        end
-                    end
-                end
-                                      wrenchMe()
-                                      if not ConsumeSongpyeon then
-                    Sleep(100)
-                    for i = 1, 1 do
-                        if UseSongpyeon then
-                                local x, y = getSitXYForConsume()
-    SendPacketRaw(false, {
-      type = 3,
-      value = 1056,
-      px = x,
-      py = y,
-      x = x * 32,
-      y = y * 32
-    })
-                            break
-                        end
-                    end
-                end
+      functionConsume()
       Sleep(250) -- Add a small delay to prevent high CPU usage
       AutoConvertDLCheck()
       Sleep(250) -- Add a small delay to prevent high CPU usage
-      SendInfoPNB() -- Send main webhook every 5 minutes
-      SendWebhook2() -- Send second webhook every 5 minutes
       Sleep(250) -- Add a small delay to prevent high CPU usage
     end
   end
