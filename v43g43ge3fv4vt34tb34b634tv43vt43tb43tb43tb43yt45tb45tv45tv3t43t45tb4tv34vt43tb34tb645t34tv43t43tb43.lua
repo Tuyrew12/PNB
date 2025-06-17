@@ -41,6 +41,7 @@ ConsumeClover = false
 ConsumeSongpyeon = false
 IsConsuming = false
 LastWebhook2Time = 0
+delayReconnect = 2500
 LastWebhookTime = 0 -- Added to track first webhook last send time
 RemoveHooks()
 
